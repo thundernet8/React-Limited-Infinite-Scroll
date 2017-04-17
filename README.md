@@ -3,6 +3,7 @@
 ## Limited Infinite Scroll
 
 React infinite scroll loader component, mannual loader will replace auto-loader when the page reach the limit(Because some users do not like infinite loading all pages, maybe they just want to see the footer)
+
 [Demo](http://wuxueqian.github.io/demo/react-limited-infinite-scroll/#/)
 
 ## Installation

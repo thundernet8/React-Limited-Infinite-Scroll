@@ -3,6 +3,7 @@
 ## Limited Infinite Scroll
 
 React无限滚动加载组件，加载一定分页后改为手动加载器(因为有些用户不喜欢永远无限加载，可能他们只是想看Footer)
+
 [Demo](http://wuxueqian.github.io/demo/react-limited-infinite-scroll/#/)
 
 ## 安装
