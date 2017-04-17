@@ -52,7 +52,7 @@ const items = list.map((item, index) => {
 | `mannualLoader`  | `Element`     |            | mannual load-more button|
 | `noMore`         | `Element`     | `null`     | indicator for no more items|
 
-## 其它
+## Others
 
 For React 15.4+ users, install v2.x.x
 ```
