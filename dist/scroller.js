@@ -20,8 +20,8 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var LimitedInfiniteScroll = function (_Comment) {
-    _inherits(LimitedInfiniteScroll, _Comment);
+var LimitedInfiniteScroll = function (_Component) {
+    _inherits(LimitedInfiniteScroll, _Component);
 
     function LimitedInfiniteScroll() {
         var _ref;
@@ -34,21 +34,7 @@ var LimitedInfiniteScroll = function (_Comment) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = LimitedInfiniteScroll.__proto__ || Object.getPrototypeOf(LimitedInfiniteScroll)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
-            loading: false
-        }, _this._defaultSpinLoader = _react2.default.createElement(
-            'div',
-            { style: { textAlign: 'center', fontSize: 20, lineHeight: 36, marginTop: 20, marginBottom: 20 } },
-            'Loading...'
-        ), _this._defaultManualLoader = _react2.default.createElement(
-            'div',
-            { style: { textAlign: 'center' } },
-            _react2.default.createElement(
-                'span',
-                { style: { fontSize: 20, lineHeight: 36, marginTop: 20, marginBottom: 20, display: 'inline-block', color: '#88899a', border: '1px solid #88899a', borderTopLeftRadius: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3, borderBottomLeftRadius: 3 } },
-                'Load More'
-            )
-        ), _this.calcTop = function (element) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = LimitedInfiniteScroll.__proto__ || Object.getPrototypeOf(LimitedInfiniteScroll)).call.apply(_ref, [this].concat(args))), _this), _this.calcTop = function (element) {
             if (!element) {
                 return 0;
             }
@@ -79,11 +65,14 @@ var LimitedInfiniteScroll = function (_Comment) {
             scrollEl.addEventListener('scroll', _this.scrollHandler, false);
             scrollEl.addEventListener('resize', _this.scrollHandler, false);
 
+            console.log('attachScrollEvent');
+
             if (_this.props.autoLoad && !_this.autoLoaded) {
                 _this.autoLoaded = true;
                 _this.scrollHandler();
             }
         }, _this.detachScrollEvent = function () {
+            console.log('detachScrollEvent');
             var scrollEl = _this.props.useWindow ? window : _this.selfComponent.parentNode;
 
             scrollEl.removeEventListener('scroll', _this.scrollHandler, false);
@@ -92,23 +81,25 @@ var LimitedInfiniteScroll = function (_Comment) {
     }
 
     _createClass(LimitedInfiniteScroll, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            this.page = this.props.pageStart;
+            this.autoLoaded = false;
+        }
+    }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
             this.attachScrollEvent();
         }
     }, {
-        key: 'componentWillUpdate',
-        value: function componentWillUpdate(nextProps, nextState) {
-            this.detachScrollEvent();
-        }
-    }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate(prevProps, prevState) {
-            if ((!this.props.limit || this.page < this.props.limit) && prevState.loading === this.state.loading) {
-                this.attachScrollEvent();
-                this.setState({
-                    loading: false
-                });
+            var _this2 = this;
+
+            if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length) {
+                setTimeout(function () {
+                    _this2.attachScrollEvent();
+                }, 0);
             }
         }
     }, {
@@ -119,7 +110,7 @@ var LimitedInfiniteScroll = function (_Comment) {
     }, {
         key: 'render',
         value: function render() {
-            var _this2 = this;
+            var _this3 = this;
 
             var _props = this.props,
                 limit = _props.limit,
@@ -135,30 +126,29 @@ var LimitedInfiniteScroll = function (_Comment) {
                 children = _props.children,
                 props = _objectWithoutProperties(_props, ['limit', 'pageStart', 'threshold', 'hasMore', 'autoLoad', 'useWindow', 'loadNext', 'spinLoader', 'mannualLoader', 'noMore', 'children']);
 
-            mannualLoader.props.onClick = function () {
-                loadNext(_this2.page += 1);
-                _this2.setState({
-                    loading: true
-                });
-            };
+            var cloneMannualLoader = _react2.default.cloneElement(mannualLoader, {
+                onClick: function onClick() {
+                    loadNext(_this3.page += 1);
+                }
+            });
 
             props.ref = function (node) {
-                return _this2.selfComponent = node;
+                _this3.selfComponent = node;
             };
 
             return _react2.default.createElement(
                 'div',
                 props,
                 children,
-                this.state.loading && hasMore && this.page < limit && spinLoader,
-                hasMore && limit > 0 && this.page >= limit && mannualLoader,
+                hasMore && this.page < limit && spinLoader,
+                hasMore && limit > 0 && this.page >= limit && cloneMannualLoader,
                 !hasMore && noMore
             );
         }
     }]);
 
     return LimitedInfiniteScroll;
-}(Comment);
+}(_react.Component);
 
 LimitedInfiniteScroll.propTypes = {
     limit: _react.PropTypes.number,
@@ -179,8 +169,20 @@ LimitedInfiniteScroll.defaultProps = {
     hasMore: false,
     autoLoad: true,
     useWindow: true,
-    spinLoader: undefined._defaultSpinLoader,
-    mannualLoader: undefined._defaultManualLoader,
+    spinLoader: _react2.default.createElement(
+        'div',
+        { style: { textAlign: 'center', fontSize: 20, lineHeight: 1.5, paddingTop: 20, paddingBottom: 20, clear: 'both' } },
+        'Loading...'
+    ),
+    mannualLoader: _react2.default.createElement(
+        'div',
+        { style: { textAlign: 'center', clear: 'both' } },
+        _react2.default.createElement(
+            'span',
+            { style: { fontSize: 20, lineHeight: 1.5, marginTop: 20, marginBottom: 20, display: 'inline-block', color: '#88899a', border: '1px solid #88899a', borderTopLeftRadius: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3, borderBottomLeftRadius: 3, padding: '10px 20px', cursor: 'pointer' } },
+            'Load More'
+        )
+    ),
     noMore: null
 };
 exports.default = LimitedInfiniteScroll;
