@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react'
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 
 export default class LimitedInfiniteScroll extends Component {
     static propTypes = {
@@ -22,8 +23,12 @@ export default class LimitedInfiniteScroll extends Component {
         autoLoad: true,
         useWindow: true,
         spinLoader: <div style={{textAlign: 'center', fontSize: 20, lineHeight: 1.5, paddingTop: 20, paddingBottom: 20, clear: 'both'}}>Loading...</div>,
-        mannualLoader: <div style={{textAlign: 'center', clear: 'both'}}><span style={{fontSize: 20, lineHeight: 1.5, marginTop: 20, marginBottom: 20, display: 'inline-block', color: '#88899a', border: '1px solid #88899a', borderTopLeftRadius: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3, borderBottomLeftRadius: 3, padding: '10px 20px', cursor: 'pointer'}}>Load More</span></div>,
+        mannualLoader: <div style={{textAlign: 'center', clear: 'both', display: 'inline-block'}}><span style={{fontSize: 20, lineHeight: 1.5, marginTop: 20, marginBottom: 20, display: 'inline-block', color: '#88899a', border: '1px solid #88899a', borderTopLeftRadius: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3, borderBottomLeftRadius: 3, padding: '10px 20px', cursor: 'pointer'}}>Load More</span></div>,
         noMore: null
+    }
+
+    state = {
+        loading: false
     }
 
     calcTop = (element) => {
@@ -47,6 +52,9 @@ export default class LimitedInfiniteScroll extends Component {
             this.detachScrollEvent()
 
             if (typeof this.props.loadNext === 'function') {
+                this.setState({
+                    loading: true
+                })
                 this.props.loadNext(this.page += 1)
             }
         }
@@ -61,8 +69,6 @@ export default class LimitedInfiniteScroll extends Component {
         scrollEl.addEventListener('scroll', this.scrollHandler, false)
         scrollEl.addEventListener('resize', this.scrollHandler, false)
 
-        console.log('attachScrollEvent')
-
         if (this.props.autoLoad && !this.autoLoaded) {
             this.autoLoaded = true
             this.scrollHandler()
@@ -70,7 +76,6 @@ export default class LimitedInfiniteScroll extends Component {
     }
 
     detachScrollEvent = () => {
-        console.log('detachScrollEvent')
         const scrollEl = this.props.useWindow ? window : this.selfComponent.parentNode
 
         scrollEl.removeEventListener('scroll', this.scrollHandler, false)
@@ -86,8 +91,16 @@ export default class LimitedInfiniteScroll extends Component {
         this.attachScrollEvent()
     }
 
+    componentWillUpdate (nextProps, nextState) {
+        if (this.props.children.length < nextProps.children.length && nextState.loading === this.state.loading) {
+            this.setState({
+                loading: false
+            })
+        }
+    }
+
     componentDidUpdate (prevProps, prevState) {
-        if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length) {
+        if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length && prevState.loading === this.state.loading) {
             setTimeout(() => {
                 this.attachScrollEvent()
             }, 0)
@@ -103,6 +116,9 @@ export default class LimitedInfiniteScroll extends Component {
 
         const cloneMannualLoader = React.cloneElement(mannualLoader, {
             onClick: () => {
+                this.setState({
+                    loading: true
+                })
                 loadNext(this.page += 1)
             }
         })
@@ -112,8 +128,8 @@ export default class LimitedInfiniteScroll extends Component {
         return (
             <div {...props}>
                 {children}
-                {hasMore && this.page < limit && spinLoader}
-                {hasMore && limit > 0 && this.page >= limit && cloneMannualLoader}
+                {this.state.loading && hasMore && <div style={{textAlign: 'center'}}>{spinLoader}</div>}
+                {!this.state.loading && hasMore && limit > 0 && this.page >= limit && <div style={{textAlign: 'center'}}>{cloneMannualLoader}</div>}
                 {!hasMore && noMore}
             </div>
         )

@@ -10,6 +10,10 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
+var _propTypes = require('prop-types');
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -34,7 +38,9 @@ var LimitedInfiniteScroll = function (_Component) {
             args[_key] = arguments[_key];
         }
 
-        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = LimitedInfiniteScroll.__proto__ || Object.getPrototypeOf(LimitedInfiniteScroll)).call.apply(_ref, [this].concat(args))), _this), _this.calcTop = function (element) {
+        return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_ref = LimitedInfiniteScroll.__proto__ || Object.getPrototypeOf(LimitedInfiniteScroll)).call.apply(_ref, [this].concat(args))), _this), _this.state = {
+            loading: false
+        }, _this.calcTop = function (element) {
             if (!element) {
                 return 0;
             }
@@ -53,6 +59,9 @@ var LimitedInfiniteScroll = function (_Component) {
                 _this.detachScrollEvent();
 
                 if (typeof _this.props.loadNext === 'function') {
+                    _this.setState({
+                        loading: true
+                    });
                     _this.props.loadNext(_this.page += 1);
                 }
             }
@@ -65,14 +74,11 @@ var LimitedInfiniteScroll = function (_Component) {
             scrollEl.addEventListener('scroll', _this.scrollHandler, false);
             scrollEl.addEventListener('resize', _this.scrollHandler, false);
 
-            console.log('attachScrollEvent');
-
             if (_this.props.autoLoad && !_this.autoLoaded) {
                 _this.autoLoaded = true;
                 _this.scrollHandler();
             }
         }, _this.detachScrollEvent = function () {
-            console.log('detachScrollEvent');
             var scrollEl = _this.props.useWindow ? window : _this.selfComponent.parentNode;
 
             scrollEl.removeEventListener('scroll', _this.scrollHandler, false);
@@ -92,11 +98,20 @@ var LimitedInfiniteScroll = function (_Component) {
             this.attachScrollEvent();
         }
     }, {
+        key: 'componentWillUpdate',
+        value: function componentWillUpdate(nextProps, nextState) {
+            if (this.props.children.length < nextProps.children.length && nextState.loading === this.state.loading) {
+                this.setState({
+                    loading: false
+                });
+            }
+        }
+    }, {
         key: 'componentDidUpdate',
         value: function componentDidUpdate(prevProps, prevState) {
             var _this2 = this;
 
-            if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length) {
+            if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length && prevState.loading === this.state.loading) {
                 setTimeout(function () {
                     _this2.attachScrollEvent();
                 }, 0);
@@ -128,6 +143,9 @@ var LimitedInfiniteScroll = function (_Component) {
 
             var cloneMannualLoader = _react2.default.cloneElement(mannualLoader, {
                 onClick: function onClick() {
+                    _this3.setState({
+                        loading: true
+                    });
                     loadNext(_this3.page += 1);
                 }
             });
@@ -140,8 +158,16 @@ var LimitedInfiniteScroll = function (_Component) {
                 'div',
                 props,
                 children,
-                hasMore && this.page < limit && spinLoader,
-                hasMore && limit > 0 && this.page >= limit && cloneMannualLoader,
+                this.state.loading && hasMore && _react2.default.createElement(
+                    'div',
+                    { style: { textAlign: 'center' } },
+                    spinLoader
+                ),
+                !this.state.loading && hasMore && limit > 0 && this.page >= limit && _react2.default.createElement(
+                    'div',
+                    { style: { textAlign: 'center' } },
+                    cloneMannualLoader
+                ),
                 !hasMore && noMore
             );
         }
@@ -151,16 +177,16 @@ var LimitedInfiniteScroll = function (_Component) {
 }(_react.Component);
 
 LimitedInfiniteScroll.propTypes = {
-    limit: _react.PropTypes.number,
-    pageStart: _react.PropTypes.number,
-    threshold: _react.PropTypes.number,
-    hasMore: _react.PropTypes.bool,
-    autoLoad: _react.PropTypes.bool,
-    useWindow: _react.PropTypes.bool,
-    loadNext: _react.PropTypes.func.isRequired,
-    spinLoader: _react.PropTypes.element,
-    mannualLoader: _react.PropTypes.element,
-    noMore: _react.PropTypes.element
+    limit: _propTypes2.default.number,
+    pageStart: _propTypes2.default.number,
+    threshold: _propTypes2.default.number,
+    hasMore: _propTypes2.default.bool,
+    autoLoad: _propTypes2.default.bool,
+    useWindow: _propTypes2.default.bool,
+    loadNext: _propTypes2.default.func.isRequired,
+    spinLoader: _propTypes2.default.element,
+    mannualLoader: _propTypes2.default.element,
+    noMore: _propTypes2.default.element
 };
 LimitedInfiniteScroll.defaultProps = {
     limit: 5,
@@ -176,7 +202,7 @@ LimitedInfiniteScroll.defaultProps = {
     ),
     mannualLoader: _react2.default.createElement(
         'div',
-        { style: { textAlign: 'center', clear: 'both' } },
+        { style: { textAlign: 'center', clear: 'both', display: 'inline-block' } },
         _react2.default.createElement(
             'span',
             { style: { fontSize: 20, lineHeight: 1.5, marginTop: 20, marginBottom: 20, display: 'inline-block', color: '#88899a', border: '1px solid #88899a', borderTopLeftRadius: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3, borderBottomLeftRadius: 3, padding: '10px 20px', cursor: 'pointer' } },
