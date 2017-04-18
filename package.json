@@ -1,6 +1,6 @@
 {
   "name": "react-limited-infinite-scroll",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "React limited infinite scroll component",
   "main": "dist/scroller.js",
   "scripts": {

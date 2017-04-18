@@ -54,12 +54,12 @@ const items = list.map((item, index) => {
 
 ## 其它
 
-使用React 15.4+的用户，由于PropTypes已经从React主库分离，请安装2.x.x版本
+使用React 15.5+的用户，由于PropTypes已经从React主库分离，请安装2.x.x版本
 ```
 npm install react-limited-infinite-scroll --save-dev
 ```
 
 而使用较老版本React的用户，安装1.x.x版本
 ```
-npm install react-limited-infinite-scroll@^1.0.0 --save-dev
+npm install react-limited-infinite-scroll@~1.0.0 --save-dev
 ```

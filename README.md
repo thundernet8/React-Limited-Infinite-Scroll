@@ -54,12 +54,12 @@ const items = list.map((item, index) => {
 
 ## Others
 
-For React 15.4+ users, install v2.x.x
+For React 15.5+ users, install v2.x.x
 ```
 npm install react-limited-infinite-scroll --save-dev
 ```
 
 or install v1.x.x
 ```
-npm install react-limited-infinite-scroll@^1.0.0 --save-dev
+npm install react-limited-infinite-scroll@~1.0.0 --save-dev
 ```
