@@ -92,7 +92,7 @@ export default class LimitedInfiniteScroll extends Component {
     }
 
     componentWillUpdate (nextProps, nextState) {
-        if (this.props.children.length < nextProps.children.length && nextState.loading === this.state.loading) {
+        if (this.props.children.length < nextProps.children.length) {
             this.setState({
                 loading: false
             })
@@ -100,7 +100,7 @@ export default class LimitedInfiniteScroll extends Component {
     }
 
     componentDidUpdate (prevProps, prevState) {
-        if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length && prevState.loading === this.state.loading) {
+        if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length) {
             setTimeout(() => {
                 this.attachScrollEvent()
             }, 0)

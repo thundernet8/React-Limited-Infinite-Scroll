@@ -100,7 +100,7 @@ var LimitedInfiniteScroll = function (_Component) {
     }, {
         key: 'componentWillUpdate',
         value: function componentWillUpdate(nextProps, nextState) {
-            if (this.props.children.length < nextProps.children.length && nextState.loading === this.state.loading) {
+            if (this.props.children.length < nextProps.children.length) {
                 this.setState({
                     loading: false
                 });
@@ -111,7 +111,7 @@ var LimitedInfiniteScroll = function (_Component) {
         value: function componentDidUpdate(prevProps, prevState) {
             var _this2 = this;
 
-            if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length && prevState.loading === this.state.loading) {
+            if ((!this.props.limit || this.page < this.props.limit) && this.props.children.length > prevProps.children.length) {
                 setTimeout(function () {
                     _this2.attachScrollEvent();
                 }, 0);
