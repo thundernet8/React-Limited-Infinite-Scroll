@@ -45,7 +45,7 @@ const items = list.map((item, index) => {
 | `pageStart`      | `Number`      | `0`        | 起始分页|
 | `threshold`      | `Number`      | `200`      | 列表底部距离窗口距离少于该临界值时触发`loadNext`|
 | `hasMore`        | `Boolean`     | `false`    | 是否有更多分页可以加载|
-| `autoLoad`       | `Boolean`     | `true`     | 是否组件初始化时就直接加载第一页内容|
+| `autoLoad`       | `Boolean`     | `true`     | 是否组件初始化时就直接加载第一页内容(pageStart应该设为0)|
 | `useWindow`      | `Boolean`     | `true`     | 事件监听是否附件至`window`, 否则附加至组件的`parentNode`|
 | `loadNext`       | `Function`    |            | 加载下一页的回调方法|
 | `spinLoader`     | `Element`     |            | 自动加载指示器元素|
